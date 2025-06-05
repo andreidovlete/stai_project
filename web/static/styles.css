@@ -1,5 +1,4 @@
- /* You can keep this in style.css too */
-        .chat-body {
+ .chat-body {
             background-color: #f0f0f0;
             padding: 20px;
             display: flex;
@@ -7,11 +6,29 @@
             height: 60vh;
             overflow-y: auto;
         }
-
+	#chat-form .bi {
+    font-size: 1.0rem;
+}
+.greeting-user {
+    background-color: white;
+    color: black;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 1rem;
+}
         .bubble-wrapper {
             display: flex;
-            max-width: 75%;
+            width: 100%;
             margin-bottom: 10px;
+        }
+
+        .justify-end {
+            justify-content: flex-end;
+        }
+
+        .justify-start {
+            justify-content: flex-start;
         }
 
         .bubble {
@@ -21,21 +38,26 @@
             line-height: 1.4;
             word-break: break-word;
             animation: popIn 0.4s ease forwards;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 75%;
+            position: relative;
         }
 
-        .user-bubble {
-            background-color: #ffe5e5;
-            color: #990000;
-            margin-left: auto;
-            border-bottom-right-radius: 0;
+        .name-user {
+            color: black;
+            font-weight: bold;
         }
 
-        .bot-bubble {
-            background-color: #d4e9ff;
-            color: #003366;
-            margin-right: auto;
-            border-bottom-left-radius: 0;
+        .name-bot {
+            color: #1a4d80;
+            font-weight: bold;
+        }
+        .timestamp {
+            font-size: 0.75rem;
+            color: black;
+            margin-top: 4px;
+            display: block;
+            text-align: right;
         }
 
         @keyframes popIn {
@@ -57,3 +79,36 @@
             margin-left: 10px;
             vertical-align: middle;
         }
+
+        .chat-header h5 {
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .export-btn {
+            white-space: nowrap;
+        }
+        .chat-header, .history-header {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+    padding: 1rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.btn-white {
+    background-color: white;
+    color: #2575fc;
+    border: 1px solid #fff;
+    font-weight: bold;
+}
+
+.btn-white:hover {
+    background-color: #f0f0f0;
+    color: #6a11cb;
+}
+.avatar-icon {
+  min-width: 40px;
+  min-height: 40px;
+}

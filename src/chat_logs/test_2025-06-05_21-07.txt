@@ -1,0 +1,62 @@
+[21:07] test: asd
+[21:07] Bot: Tell me more!
+[21:14] test: asdasd
+[21:14] Bot: Haha, good one!
+[21:14] test: asd
+[21:14] Bot: Why do you say that?
+[21:15] test: 123
+[21:15] Bot: That's interesting!
+[21:15] test: asd
+[21:15] Bot: Haha, good one!
+[21:15] test: asd
+[21:15] Bot: That's interesting!
+[21:19] test: asd
+[21:19] Bot: I like chatting with you.
+[21:19] test: asd
+[21:19] Bot: That's interesting!
+[21:19] test: asd
+[21:19] Bot: Haha, good one!
+[21:19] test: asd
+[21:19] Bot: Why do you say that?
+[21:21] test: asd
+[21:21] Bot: That's interesting!
+[21:21] test: test
+[21:21] Bot: Tell me more!
+[21:22] test: test
+[21:22] Bot: That's interesting!
+[21:22] test: asdas
+[21:22] Bot: Why do you say that?
+[21:23] test: test
+[21:23] Bot: Tell me more!
+[21:23] test: asd
+[21:23] Bot: That's interesting!
+[21:24] test: asdasd
+[21:24] Bot: That's interesting!
+[21:24] test: test
+[21:24] Bot: That's interesting!
+[21:24] test: qwe
+[21:24] Bot: Haha, good one!
+[21:24] test: micul
+[21:24] Bot: I like chatting with you.
+[21:26] test: test
+[21:26] Bot: Haha, good one!
+[21:26] test: testare
+[21:26] Bot: Sounds cool!
+[21:27] test: ardei
+[21:27] Bot: Why do you say that?
+[21:27] test: ardei
+[21:27] Bot: Why do you say that?
+[21:29] test: ardei
+[21:29] Bot: Sounds cool!
+[21:29] test: ardei
+[21:29] Bot: Haha, good one!
+[21:29] test: asd
+[21:29] Bot: Sounds cool!
+[21:29] test: asd
+[21:29] Bot: That's interesting!
+[21:29] test: asdqwe
+[21:29] Bot: Why do you say that?
+[21:29] test: asdasd
+[21:29] Bot: Why do you say that?
+[21:29] test: qweqwe
+[21:29] Bot: Tell me more!

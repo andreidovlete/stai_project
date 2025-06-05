@@ -24,3 +24,6 @@ uml
 # Ignore uploaded files
 src/uploads/
 uploads/
+
+# Ignore flask files
+flask_session
