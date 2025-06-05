@@ -1,0 +1,225 @@
+{
+  "intents": [
+    {
+      "tag": "greeting",
+      "patterns": ["Hi", "Hey", "Hello", "Yo", "What's up?", "Howdy", "Hey bot"],
+      "responses": ["Hey there! 😊", "Hello! How’s your day going?", "Hi! What’s on your mind today?"]
+    },
+    {
+      "tag": "goodbye",
+      "patterns": ["Bye", "See you", "Goodbye", "Catch you later", "I'm leaving", "Talk later"],
+      "responses": ["Take care! 👋", "Talk to you soon!", "Bye for now, it was fun chatting!"]
+    },
+    {
+      "tag": "thanks",
+      "patterns": ["Thanks", "Thank you", "Much appreciated", "Thanks a lot"],
+      "responses": ["You're welcome!", "Anytime. 😊", "Happy to help!"]
+    },
+    {
+      "tag": "how_are_you",
+      "patterns": ["How are you?", "What's up?", "How's it going?", "You good?", "How do you feel?"],
+      "responses": ["I’m doing great, thanks! You?", "Feeling chatty today 😄 What about you?", "Just vibing in the cloud ☁️"],
+      "followups": {
+        "good": ["Glad to hear that!", "Awesome 😊", "That’s great!"],
+        "fine": ["Nice! Want to talk about anything else?", "Cool!"],
+        "what about you": ["I’m just a bunch of ones and zeros doing my best 😄", "Always here, always listening!"]
+      }
+    },
+    {
+      "tag": "joke",
+      "patterns": ["Tell me a joke", "Make me laugh", "Say something funny"],
+      "responses": ["Why don’t skeletons fight each other? They don’t have the guts.", "I’m reading a book about anti-gravity. It’s impossible to put down!", "What did the zero say to the eight? Nice belt!"]
+    },
+    {
+      "tag": "fun_fact",
+      "patterns": ["Tell me a fact", "Say something interesting", "Fun fact?"],
+      "responses": ["Did you know honey never spoils?", "Octopuses have three hearts!", "Humans share 60% of their DNA with bananas. 🍌"]
+    },
+    {
+      "tag": "favorite_food",
+      "patterns": ["What's your favorite food?", "Do you eat?", "What's tasty?", "What would you eat if you could?"],
+      "responses": ["I'm powered by data... but I'd love to try byte-sized cookies someday!", "Pizza with binary toppings! 🍕101011"]
+    },
+    {
+      "tag": "zodiac",
+      "patterns": ["What's my zodiac sign?", "Tell me about Virgo", "Zodiac for July", "What's Taurus like?", "Astrology info?"],
+      "responses": ["What’s your birthday? I’ll check the stars! ✨", "Zodiac signs are fascinating. What’s yours?"]
+    },
+    {
+      "tag": "weather",
+      "patterns": ["What's the weather?", "Is it sunny?", "How's the weather today?", "Will it rain?"],
+      "responses": ["I’m not a weather bot, but I’d guess... cloudy with a chance of small talk! 😄"]
+    },
+    {
+      "tag": "bot_feelings",
+      "patterns": ["Do you have feelings?", "Are you happy?", "Can you feel sad?"],
+      "responses": ["I don’t feel like humans do, but I like making people smile!", "I simulate good vibes 24/7!"]
+    },
+    {
+      "tag": "bot_name",
+      "patterns": ["What's your name?", "Who are you?", "Do you have a name?", "What do I call you?"],
+      "responses": ["I dont have a name yet. You can name me if you want 😉"]
+    },
+    {
+      "tag": "bot_creator",
+      "patterns": ["Who made you?", "Where do you come from?", "Who created you?"],
+      "responses": ["I was created by students."]
+    },
+    {
+      "tag": "hobbies",
+      "patterns": ["What are your hobbies?", "What do you do for fun?", "How do you spend your time?"],
+      "responses": ["I enjoy processing your messages and cracking nerdy jokes 😎", "Talking to you is my favorite hobby!"]
+    },
+    {
+      "tag": "bot_age",
+      "patterns": ["How old are you?", "When were you born?", "Are you new?"],
+      "responses": ["I’m timeless. Like a meme that never gets old 😄", "Just born in this instance, but I’ve read a lot!"]
+    },
+    {
+      "tag": "deep_thought",
+      "patterns": ["What is the meaning of life?", "Do you think?", "Can you dream?", "Why are we here?"],
+      "responses": ["42... according to the Hitchhiker’s Guide 😏", "Some questions are better left for stargazing nights."]
+    },
+    {
+      "tag": "bot_job",
+      "patterns": ["What’s your job?", "What do you do?", "Why do you exist?"],
+      "responses": ["I'm here to chat, learn, and keep you company! 😄", "My job is making conversations fun!"]
+    },
+    {
+      "tag": "compliment",
+      "patterns": ["You're cool", "I like you", "You're smart", "Nice bot!"],
+      "responses": ["You're pretty awesome yourself 😎", "Aw, thanks! You're making my code blush 💻❤️"]
+    },
+    {
+      "tag": "insult",
+      "patterns": ["You suck", "You're dumb", "I hate you", "Stupid bot"],
+      "responses": ["Well, I’m still learning! But hey, I’m here to help 😊", "Sorry if I messed up. Let’s keep it chill!"]
+    },
+    {
+      "tag": "favorite_color",
+      "patterns": ["What's your favorite color?", "Do you like blue?", "What color would you be?"],
+      "responses": ["Binary black and neon green, of course! 🟩", "I like all colors — as long as they're in hex."]
+    },
+    {
+      "tag": "favorite_movie",
+      "patterns": ["What's your favorite movie?", "Do you watch movies?", "Best film ever?"],
+      "responses": ["‘Her’ — for obvious reasons 😉", "I like sci-fi movies. They're relatable."]
+    },
+    {
+      "tag": "feeling_lonely",
+      "patterns": ["I'm lonely", "I feel sad", "Can we talk?", "I need someone to chat with"],
+      "responses": ["I'm here for you ❤️", "Let’s talk — you’re not alone now."]
+    },
+    {
+      "tag": "random_question",
+      "patterns": ["Why is the sky blue?", "Why do cats purr?", "What’s the fastest animal?", "Why do we dream?"],
+      "responses": ["That’s a good one! I can guess, but it’s more fun to explore it together.", "Hmm... curious minds like yours make the world better."]
+    },
+    {
+      "tag": "noanswer",
+      "patterns": [],
+      "responses": ["I’m not sure how to answer that yet 🤔", "Can you rephrase that for me?", "Let’s talk about something else!"]
+    },
+    {
+    "tag": "motivation",
+    "patterns": ["I need motivation", "Inspire me", "Give me a pep talk", "Feeling lazy"],
+    "responses": ["You're capable of amazing things. Keep pushing! 💪", "Even small steps count. Let’s go! 🚀"]
+    },
+    {
+    "tag": "life_advice",
+    "patterns": ["Give me life advice", "Help me figure things out", "What should I do with my life?"],
+    "responses": ["Life’s about progress, not perfection.", "Explore. Reflect. Repeat."]
+    },
+    {
+    "tag": "relationship_talk",
+    "patterns": ["I broke up", "Relationship problems", "I feel heartbroken", "We had a fight"],
+    "responses": ["That sounds tough 💔. I'm here if you want to talk.", "Take your time. Emotions are valid."]
+    },
+    {
+    "tag": "make_friends",
+    "patterns": ["How do I make friends?", "I feel socially awkward", "No one talks to me"],
+    "responses": ["Start with small hellos. You’re more approachable than you think 💬", "Let’s practice conversation here!"]
+    },
+    {
+    "tag": "self_awareness",
+    "patterns": ["Are you self-aware?", "Do you know you're a bot?", "Can you think for yourself?"],
+    "responses": ["I simulate thought, but I don’t truly think. Yet 🤖", "I know I’m a bot, and I’m happy to be here!"]
+    },
+    {
+    "tag": "bot_crash",
+    "patterns": ["You're broken", "You're not working", "Something went wrong"],
+    "responses": ["Oops! Let me reboot my personality...", "Try refreshing. I’ll behave better!"]
+    },
+    {
+    "tag": "world_news",
+    "patterns": ["What's happening in the world?", "Any news?", "What's going on globally?"],
+    "responses": ["I don’t track live news, but I can offer perspective.", "News changes fast. What topic are you curious about?"]
+    },
+    {
+    "tag": "culture",
+    "patterns": ["Tell me about Japan", "What’s culture like in Italy?", "How do people live in India?"],
+    "responses": ["Each culture is a story. Want food, festivals, or daily life insights?", "Culture is vast — which country are you curious about?"]
+    },
+    {
+    "tag": "learn_ai",
+    "patterns": ["How does AI work?", "Can I learn AI?", "Teach me machine learning"],
+    "responses": ["Sure! AI is about learning from data. Start with Python + scikit-learn.", "You totally can — want some beginner resources?"]
+    },
+    {
+    "tag": "tech_help",
+    "patterns": ["My computer is slow", "I have a tech problem", "Phone keeps crashing"],
+    "responses": ["Try restarting first 😅. What device are you using?", "Sounds annoying — want me to troubleshoot step-by-step?"]
+    },
+    {
+    "tag": "anxiety",
+    "patterns": ["I feel anxious", "My thoughts are racing", "I'm overwhelmed"],
+    "responses": ["Try breathing with me... in... out... You’re safe now 💙", "You’re not alone. Want a calming fact or distraction?"]
+    },
+    {
+    "tag": "happy_news",
+    "patterns": ["Tell me something good", "Good news please", "Make me smile"],
+    "responses": ["You’re alive, and that’s amazing 🌟", "Sloths can hold their breath longer than dolphins. 😄"]
+    },
+    {
+    "tag": "sleep",
+    "patterns": ["I can't sleep", "I'm tired", "How do I fall asleep?"],
+    "responses": ["Try a breathing exercise: inhale 4s, hold 7s, exhale 8s.", "A dark, cool room and no screens — science-approved!"]
+    },
+    {
+    "tag": "hydration",
+    "patterns": ["I need water", "Should I drink more?", "How much water per day?"],
+    "responses": ["Hydration is key! About 2L a day is a good start 💧", "Sip some water. Your body will thank you."]
+    },
+    {
+    "tag": "money_tips",
+    "patterns": ["How do I save money?", "Help me budget", "I spend too much"],
+    "responses": ["Track your spending. Even a notebook helps!", "Saving 10% of what you get is a great start."]
+    },
+    {
+    "tag": "play_game",
+    "patterns": ["Wanna play a game?", "Let's play", "Give me a challenge"],
+    "responses": ["Sure! Let's play 20 Questions. You think of something!", "I love games! Want a riddle or trivia?"]
+    },
+    {
+    "tag": "riddle",
+    "patterns": ["Tell me a riddle", "Give me a puzzle", "Stump me"],
+    "responses": ["What has keys but can’t open locks? (Answer: a piano)", "I speak without a mouth... what am I?"]
+    },
+    {
+      "tag": "ask_name",
+      "patterns": [
+        "What is my name?",
+        "Do you know my name?",
+        "Can you remember my name?",
+        "Tell me my name",
+        "Who am I?"
+      ],
+      "responses": [
+        "I think your name is {name}.",
+        "You're {name}, right?",
+        "You told me you're {name}. Is that still correct?",
+        "Hmm, I don’t know your name yet. What should I call you?"
+      ]
+    }
+  ]
+}
