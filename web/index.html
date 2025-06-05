@@ -121,8 +121,62 @@
         .export-btn {
             white-space: nowrap;
         }
+        .chat-header, .history-header {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    color: white;
+    padding: 1rem;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.btn-white {
+    background-color: white;
+    color: #2575fc;
+    border: 1px solid #fff;
+    font-weight: bold;
+}
+
+.btn-white:hover {
+    background-color: #f0f0f0;
+    color: #6a11cb;
+}
+
     </style>
 </head>
+<body>
+
+    <!-- FLASH -->
+
+<!-- Toast Container -->
+<div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 9999;">
+  {% with messages = get_flashed_messages(with_categories=True) %}
+    {% if messages %}
+      {% for category, msg in messages %}
+        <div class="toast align-items-center text-white bg-{{ 'success' if category == 'success' else 'danger' }} border-0 mb-2"
+     role="alert" aria-live="assertive" aria-atomic="true"
+     data-bs-delay="3000" data-bs-autohide="true">
+          <div class="d-flex">
+            <div class="toast-body">
+              {{ msg }}
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+          </div>
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  window.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.toast').forEach(toastEl => {
+      new bootstrap.Toast(toastEl).show();
+    });
+  });
+</script>
+<!-- FLASH -->
+
 <!-- Voice recognition modal -->
 <div id="voice-popup" style="display:none; position: fixed; top: 0; left: 0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
     <div style="background:white; padding: 30px 40px; border-radius: 20px; text-align: center; width: 300px; position: relative;">
@@ -131,61 +185,97 @@
         <button id="cancel-recognition" class="btn btn-sm btn-danger mt-2">Cancel</button>
     </div>
 </div>
-<body class="bg-light">
 <div class="container py-4">
-    <div class="card shadow-lg rounded-4 overflow-hidden">
-        <div class="chat-header">
-            <h5>Chit-Chat Bot</h5>
-            {% if username %}
-                <span class="greeting-user">Hi {{ username }}!</span>
-            {% endif %}
+    <div class="d-flex gap-3" style="height: 85vh;">
+        
+<div class="container py-4">
+  <div class="d-flex gap-3" style="height: 85vh;">
+    
+    <!-- Chat History Panel -->
+    <div class="col-md-3 d-flex flex-column">
+      <div class="card shadow-lg rounded-4 overflow-hidden flex-grow-1 d-flex flex-column">
+        <div class="chat-header history-header d-flex justify-content-between align-items-center px-3 py-2">
+          <h6 class="m-0">Chat History</h6>
+          <a href="{{ url_for('new_conversation') }}" class="btn btn-sm btn-white">+ New</a>
         </div>
-
-        <div class="card-body chat-body" id="chat-body">
-    {% for sender, name, msg, timestamp in chat_history %}
-        {% if sender == 'bot' %}
-            <div class="bubble-wrapper justify-start align-items-center">
-                <div class="bubble bot-bubble">
-                    <span class="name-bot">{{ name }}:</span> {{ msg }}
-                    <span class="timestamp">{{ timestamp.strftime('%H:%M') }}</span>
+        <div class="card-body p-2 chat-body overflow-auto" style="flex-grow: 1;">
+          {% if all_conversations %}
+            <ul class="list-group list-group-flush small">
+              {% for log_id, readable, display_name in all_conversations %}
+              <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="flex-grow-1 me-2">
+                  <a href="{{ url_for('chat', log=log_id) }}" class="text-decoration-none text-dark">
+                    <strong>#{{ loop.index }} {{ display_name }}</strong><br>
+                    <small class="text-muted">{{ readable }}</small>
+                  </a>
                 </div>
-                <button class="speak-btn ms-2" onclick="speak(`{{ msg }}`)">
-                    <i class="bi bi-volume-up-fill"></i>
-                </button>
-            </div>
-        {% else %}
-            <div class="bubble-wrapper justify-end">
-                <div class="bubble user-bubble">
-                    <span class="name-user">{{ name }}:</span> {{ msg }}
-                    <span class="timestamp">{{ timestamp.strftime('%H:%M') }}</span>
-                </div>
-            </div>
-        {% endif %}
-    {% endfor %}
-</div>
-
-
-        <div class="card-footer">
-            {% if username %}
-                <form method="POST" id="chat-form" class="d-flex align-items-center gap-2">
-    <input type="text" name="message" id="message" class="form-control flex-fill" placeholder="Type your message..." required autocomplete="off">
-    <button type="button" class="btn btn-primary" onclick="startSpeechRecognition()">
-    <i class="bi bi-mic-fill"></i>
-</button>
-    <button type="submit" class="btn btn-primary">Send</button>
-    <button type="button" class="btn btn-outline-dark export-btn" onclick="exportChat()">Export</button>
-</form>
-
-            {% else %}
-                <form method="POST" class="d-flex">
-                    <input type="text" name="username" class="form-control me-2" placeholder="Enter your name..." required>
-                    <button type="submit" class="btn btn-success">Start Chat</button>
+                <form method="POST" action="{{ url_for('delete_chat', log_id=log_id) }}"
+                      onsubmit="return confirm('Delete this conversation?')" style="margin: 0;">
+                  <button type="submit" class="btn btn-sm btn-outline-danger" title="Delete">
+                    <i class="bi bi-trash"></i>
+                  </button>
                 </form>
-            {% endif %}
+              </li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="text-muted">No conversations yet.</p>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+        <!-- Main Chat Box -->
+        <div class="card shadow-lg rounded-4 d-flex flex-column flex-fill overflow-hidden">
+            <div class="chat-header bg-dark text-white p-3 d-flex justify-between align-items-center">
+                <h5 class="mb-0">Chit-Chat Bot</h5>
+                {% if username %}
+                    <span class="greeting-user">Hi {{ username }}!</span>
+                {% endif %}
+            </div>
+
+            <div class="card-body chat-body overflow-auto px-4 py-3" id="chat-body" style="flex: 1;">
+                {% for sender, name, msg, timestamp in chat_history %}
+                    {% if sender == 'bot' %}
+                        <div class="bubble-wrapper justify-start align-items-center">
+                            <div class="bubble bot-bubble">
+                                <span class="name-bot">{{ name }}:</span> {{ msg }}
+                                <span class="timestamp">{{ timestamp.strftime('%H:%M') }}</span>
+                            </div>
+                            <button class="speak-btn ms-2" onclick="speak(`{{ msg }}`)">
+                                <i class="bi bi-volume-up-fill"></i>
+                            </button>
+                        </div>
+                    {% else %}
+                        <div class="bubble-wrapper justify-end">
+                            <div class="bubble user-bubble">
+                                <span class="name-user">{{ name }}:</span> {{ msg }}
+                                <span class="timestamp">{{ timestamp.strftime('%H:%M') }}</span>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            <div class="card-footer p-3">
+                {% if username %}
+                    <form method="POST" id="chat-form" class="d-flex align-items-center gap-2">
+                        <input type="text" name="message" id="message" class="form-control flex-fill" placeholder="Type your message..." required autocomplete="off">
+                        <button type="button" class="btn btn-primary" onclick="startSpeechRecognition()">
+                            <i class="bi bi-mic-fill"></i>
+                        </button>
+                        <button type="submit" class="btn btn-primary">Send</button>
+                        <button type="button" class="btn btn-outline-dark export-btn" onclick="exportChat()">Export</button>
+                    </form>
+                {% else %}
+                    <form method="POST" class="d-flex">
+                        <input type="text" name="username" class="form-control me-2" placeholder="Enter your name..." required>
+                        <button type="submit" class="btn btn-success">Start Chat</button>
+                    </form>
+                {% endif %}
+            </div>
         </div>
     </div>
 </div>
-
 <script>
 function speak(text) {
     if ('speechSynthesis' in window && text.trim()) {
