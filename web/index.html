@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chit-Chat Bot</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .chat-body {
+            background-color: #f0f0f0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 60vh;
+            overflow-y: auto;
+        }
+	#chat-form .bi {
+    font-size: 1.0rem;
+}
+.greeting-user {
+    background-color: white;
+    color: black;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 1rem;
+}
+        .bubble-wrapper {
+            display: flex;
+            width: 100%;
+            margin-bottom: 10px;
+        }
+
+        .justify-end {
+            justify-content: flex-end;
+        }
+
+        .justify-start {
+            justify-content: flex-start;
+        }
+
+        .bubble {
+            padding: 12px 18px;
+            border-radius: 20px;
+            font-size: 16px;
+            line-height: 1.4;
+            word-break: break-word;
+            animation: popIn 0.4s ease forwards;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 75%;
+            position: relative;
+        }
+
+        .user-bubble {
+            background-color: #e0e0e0;
+            color: #333;
+            border-bottom-right-radius: 0;
+        }
+
+        .bot-bubble {
+            background-color: #d4e9ff;
+            color: #003366;
+            border-bottom-left-radius: 0;
+        }
+
+        .name-user {
+            color: black;
+            font-weight: bold;
+        }
+
+        .name-bot {
+            color: #1a4d80;
+            font-weight: bold;
+        }
+
+        .timestamp {
+            font-size: 0.75rem;
+            color: black;
+            margin-top: 4px;
+            display: block;
+            text-align: right;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .speak-btn {
+            font-size: 0.85rem;
+            color: #555;
+            background: none;
+            border: none;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        .chat-header {
+            background: linear-gradient(135deg, #2c3e50, #4ca1af);
+            color: white;
+            padding: 16px 20px;
+            border-top-left-radius: 0.5rem;
+            border-top-right-radius: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-header h5 {
+            margin: 0;
+            font-weight: bold;
+        }
+
+        .export-btn {
+            white-space: nowrap;
+        }
+    </style>
+</head>
+<body class="bg-light">
+<div class="container py-4">
+    <div class="card shadow-lg rounded-4 overflow-hidden">
+        <div class="chat-header">
+            <h5>Chit-Chat Bot</h5>
+            {% if username %}
+                <span class="greeting-user">Hi {{ username }}!</span>
+            {% endif %}
+        </div>
+
+        <div class="card-body chat-body" id="chat-body">
+    {% for sender, name, msg, timestamp in chat_history %}
+        {% if sender == 'bot' %}
+            <div class="bubble-wrapper justify-start align-items-center">
+                <div class="bubble bot-bubble">
+                    <span class="name-bot">{{ name }}:</span> {{ msg }}
+                    <span class="timestamp">{{ timestamp.strftime('%H:%M') }}</span>
+                </div>
+                <button class="speak-btn ms-2" onclick="speak(`{{ msg }}`)">
+                    <i class="bi bi-volume-up-fill"></i>
+                </button>
+            </div>
+        {% else %}
+            <div class="bubble-wrapper justify-end">
+                <div class="bubble user-bubble">
+                    <span class="name-user">{{ name }}:</span> {{ msg }}
+                    <span class="timestamp">{{ timestamp.strftime('%H:%M') }}</span>
+                </div>
+            </div>
+        {% endif %}
+    {% endfor %}
+</div>
+
+
+        <div class="card-footer">
+            {% if username %}
+                <form method="POST" id="chat-form" class="d-flex align-items-center gap-2">
+    <input type="text" name="message" id="message" class="form-control flex-fill" placeholder="Type your message..." required autocomplete="off">
+    <button type="button" class="btn btn-primary" onclick="speak(document.getElementById('message').value)">
+    <i class="bi bi-mic-fill"></i>
+</button>
+    <button type="submit" class="btn btn-primary">Send</button>
+    <button type="button" class="btn btn-outline-dark export-btn" onclick="exportChat()">Export</button>
+</form>
+
+            {% else %}
+                <form method="POST" class="d-flex">
+                    <input type="text" name="username" class="form-control me-2" placeholder="Enter your name..." required>
+                    <button type="submit" class="btn btn-success">Start Chat</button>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+<script>
+    function speak(text) {
+        if ('speechSynthesis' in window && text.trim()) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            window.speechSynthesis.cancel();
+            window.speechSynthesis.speak(utterance);
+        }
+    }
+
+    function exportChat() {
+        const bubbles = document.querySelectorAll('.bubble');
+        let chatText = '';
+        bubbles.forEach(bubble => {
+            chatText += bubble.innerText.trim() + '\n\n';
+        });
+        const blob = new Blob([chatText], { type: 'text/plain' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = 'chat_history.txt';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    }
+
+    window.onload = () => {
+        const chatBody = document.getElementById("chat-body");
+        if (chatBody) {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        const chatForm = document.getElementById('chat-form');
+        const messageInput = document.getElementById('message');
+
+        if (chatForm && messageInput) {
+            chatForm.addEventListener('submit', (e) => {
+                e.preventDefault();
+
+                const userMessage = messageInput.value.trim();
+                if (!userMessage) return;
+
+                // Append user message to chat body
+                const userWrapper = document.createElement('div');
+                userWrapper.className = 'bubble-wrapper justify-end';
+                userWrapper.innerHTML = `
+                    <div class="bubble user-bubble">
+                        <span class="name-user">You:</span> ${userMessage}
+                        <span class="timestamp">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                    </div>`;
+                chatBody.appendChild(userWrapper);
+
+                // Add "Typing..." bubble
+                const typingWrapper = document.createElement('div');
+                typingWrapper.className = 'bubble-wrapper justify-start typing-indicator';
+                typingWrapper.innerHTML = `
+                    <div class="bubble bot-bubble">
+                        <span class="name-bot">Bot:</span> <em>Typing...</em>
+                    </div>`;
+                chatBody.appendChild(typingWrapper);
+
+                chatBody.scrollTop = chatBody.scrollHeight;
+
+                // Submit the form after short delay
+                setTimeout(() => {
+                    chatForm.submit();
+                }, 800);
+            });
+        }
+    };
+</script>
+
+</body>
+</html>

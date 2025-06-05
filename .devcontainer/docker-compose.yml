@@ -1,0 +1,13 @@
+services:
+  app:
+    build:
+      context: ..
+      dockerfile: .devcontainer/Dockerfile
+    ports:
+      - "5000:5000"
+    volumes:
+      - ..:/workspaces/stai_project:cached
+    user: dev
+    working_dir: /workspaces/stai_project
+    command: ["python3", "src/app.py"]
+    #command: sleep infinity

@@ -1,0 +1,5 @@
+{
+  "restructuredtext.pythonRecommendation.disabled": true,
+  "python.envFile": "${workspaceFolder}/.env",
+  "python.analysis.extraPaths": ["src"]
+}

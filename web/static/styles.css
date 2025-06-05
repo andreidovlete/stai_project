@@ -1,0 +1,59 @@
+ /* You can keep this in style.css too */
+        .chat-body {
+            background-color: #f0f0f0;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            height: 60vh;
+            overflow-y: auto;
+        }
+
+        .bubble-wrapper {
+            display: flex;
+            max-width: 75%;
+            margin-bottom: 10px;
+        }
+
+        .bubble {
+            padding: 12px 18px;
+            border-radius: 20px;
+            font-size: 16px;
+            line-height: 1.4;
+            word-break: break-word;
+            animation: popIn 0.4s ease forwards;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .user-bubble {
+            background-color: #ffe5e5;
+            color: #990000;
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
+
+        .bot-bubble {
+            background-color: #d4e9ff;
+            color: #003366;
+            margin-right: auto;
+            border-bottom-left-radius: 0;
+        }
+
+        @keyframes popIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .speak-btn {
+            font-size: 0.85rem;
+            color: #555;
+            background: none;
+            border: none;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
