@@ -123,6 +123,14 @@
         }
     </style>
 </head>
+<!-- Voice recognition modal -->
+<div id="voice-popup" style="display:none; position: fixed; top: 0; left: 0; width:100%; height:100%; background: rgba(0,0,0,0.5); z-index: 9999; align-items: center; justify-content: center;">
+    <div style="background:white; padding: 30px 40px; border-radius: 20px; text-align: center; width: 300px; position: relative;">
+        <h5>Listening...</h5>
+        <canvas id="waveform" width="260" height="60" style="margin: 10px auto; display: block;"></canvas>
+        <button id="cancel-recognition" class="btn btn-sm btn-danger mt-2">Cancel</button>
+    </div>
+</div>
 <body class="bg-light">
 <div class="container py-4">
     <div class="card shadow-lg rounded-4 overflow-hidden">
@@ -161,7 +169,7 @@
             {% if username %}
                 <form method="POST" id="chat-form" class="d-flex align-items-center gap-2">
     <input type="text" name="message" id="message" class="form-control flex-fill" placeholder="Type your message..." required autocomplete="off">
-    <button type="button" class="btn btn-primary" onclick="speak(document.getElementById('message').value)">
+    <button type="button" class="btn btn-primary" onclick="startSpeechRecognition()">
     <i class="bi bi-mic-fill"></i>
 </button>
     <button type="submit" class="btn btn-primary">Send</button>
@@ -179,74 +187,220 @@
 </div>
 
 <script>
-    function speak(text) {
-        if ('speechSynthesis' in window && text.trim()) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            window.speechSynthesis.cancel();
-            window.speechSynthesis.speak(utterance);
-        }
+function speak(text) {
+    if ('speechSynthesis' in window && text.trim()) {
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        window.speechSynthesis.cancel();
+        window.speechSynthesis.speak(utterance);
+    }
+}
+
+function exportChat() {
+    const bubbles = document.querySelectorAll('.bubble');
+    let chatText = '';
+    bubbles.forEach(bubble => {
+        chatText += bubble.innerText.trim() + '\n\n';
+    });
+    const blob = new Blob([chatText], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'chat_history.txt';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+window.onload = () => {
+    const chatBody = document.getElementById("chat-body");
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message');
+
+    // Scroll to bottom
+    if (chatBody) {
+        chatBody.scrollTop = chatBody.scrollHeight;
     }
 
-    function exportChat() {
-        const bubbles = document.querySelectorAll('.bubble');
-        let chatText = '';
-        bubbles.forEach(bubble => {
-            chatText += bubble.innerText.trim() + '\n\n';
-        });
-        const blob = new Blob([chatText], { type: 'text/plain' });
-        const link = document.createElement('a');
-        link.href = URL.createObjectURL(blob);
-        link.download = 'chat_history.txt';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-    }
+    if (chatForm && messageInput) {
+        chatForm.addEventListener('submit', (e) => {
+            e.preventDefault();
 
-    window.onload = () => {
-        const chatBody = document.getElementById("chat-body");
-        if (chatBody) {
+            const userMessage = messageInput.value.trim();
+            if (!userMessage) return;
+
+            // Prevent duplication: skip if last user message already exists
+            const allUserBubbles = chatBody.querySelectorAll('.user-bubble');
+            const lastUserText = allUserBubbles.length
+                ? allUserBubbles[allUserBubbles.length - 1].textContent.trim()
+                : null;
+
+            if (lastUserText && lastUserText.includes(userMessage)) {
+                return; // Avoid re-adding the same message
+            }
+
+            // Add user message
+            const userWrapper = document.createElement('div');
+            userWrapper.className = 'bubble-wrapper justify-end';
+            userWrapper.innerHTML = `
+                <div class="bubble user-bubble">
+                    <span class="name-user">You:</span> ${userMessage}
+                    <span class="timestamp">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
+                </div>`;
+            chatBody.appendChild(userWrapper);
+
+            // Add typing bubble
+            const typingWrapper = document.createElement('div');
+            typingWrapper.className = 'bubble-wrapper justify-start typing-indicator';
+            typingWrapper.innerHTML = `
+                <div class="bubble bot-bubble">
+                    <span class="name-bot">Bot:</span> <em>Typing...</em>
+                </div>`;
+            chatBody.appendChild(typingWrapper);
+
             chatBody.scrollTop = chatBody.scrollHeight;
+
+            // Submit with slight delay
+            setTimeout(() => {
+                sessionStorage.setItem('lastUserMessage', userMessage); // track to prevent duplication
+                chatForm.submit();
+            }, 800);
+        });
+
+        // Prevent form resubmission on reload
+        if (window.history.replaceState) {
+            window.history.replaceState(null, null, window.location.href);
         }
+    }
+};
+</script>
 
-        const chatForm = document.getElementById('chat-form');
-        const messageInput = document.getElementById('message');
+<script>
+let recognition;
+let popup;
 
-        if (chatForm && messageInput) {
-            chatForm.addEventListener('submit', (e) => {
-                e.preventDefault();
+function showRecordingPopup() {
+    popup = document.createElement('div');
+    popup.id = 'recording-popup';
+    popup.innerHTML = `
+        <div style="background: white; padding: 20px; border-radius: 10px; width: 300px; text-align: center;">
+            <h5>Listening...</h5>
+            <canvas id="visualizer" width="280" height="40" style="background:#eee; border-radius:5px;"></canvas>
+            <button id="cancel-recording" class="btn btn-danger btn-sm mt-3">Cancel</button>
+        </div>
+    `;
+    Object.assign(popup.style, {
+        position: 'fixed',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        zIndex: 10000,
+        padding: '30px',
+        borderRadius: '10px'
+    });
+    document.body.appendChild(popup);
 
-                const userMessage = messageInput.value.trim();
-                if (!userMessage) return;
+    document.getElementById('cancel-recording').onclick = () => {
+        stopSpeechRecognition(true);
+    };
 
-                // Append user message to chat body
-                const userWrapper = document.createElement('div');
-                userWrapper.className = 'bubble-wrapper justify-end';
-                userWrapper.innerHTML = `
-                    <div class="bubble user-bubble">
-                        <span class="name-user">You:</span> ${userMessage}
-                        <span class="timestamp">${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</span>
-                    </div>`;
-                chatBody.appendChild(userWrapper);
+    startVisualizer();
+}
 
-                // Add "Typing..." bubble
-                const typingWrapper = document.createElement('div');
-                typingWrapper.className = 'bubble-wrapper justify-start typing-indicator';
-                typingWrapper.innerHTML = `
-                    <div class="bubble bot-bubble">
-                        <span class="name-bot">Bot:</span> <em>Typing...</em>
-                    </div>`;
-                chatBody.appendChild(typingWrapper);
+function hideRecordingPopup() {
+    if (popup) {
+        popup.remove();
+        popup = null;
+    }
+}
 
-                chatBody.scrollTop = chatBody.scrollHeight;
+function startSpeechRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+        alert("Speech Recognition not supported in your browser.");
+        return;
+    }
 
-                // Submit the form after short delay
-                setTimeout(() => {
-                    chatForm.submit();
-                }, 800);
-            });
+    recognition = new SpeechRecognition();
+    recognition.lang = 'en-US';
+    recognition.interimResults = false;
+    recognition.maxAlternatives = 1;
+
+    const chatForm = document.getElementById('chat-form');
+    const messageInput = document.getElementById('message');
+
+    recognition.onstart = showRecordingPopup;
+
+    recognition.onerror = (event) => {
+        console.error("Speech recognition error:", event.error);
+        hideRecordingPopup();
+    };
+
+    recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript.trim();
+        console.log("Speech transcript:", transcript);
+        if (transcript) {
+            messageInput.value = transcript;
         }
     };
+
+    recognition.onend = () => {
+        hideRecordingPopup();
+        if (messageInput.value.trim()) {
+            const sendButton = chatForm.querySelector('button[type="submit"]');
+            if (sendButton) sendButton.click();
+        }
+    };
+
+    recognition.start();
+}
+
+function stopSpeechRecognition(isCancelled = false) {
+    if (recognition) {
+        recognition.abort();
+        recognition = null;
+    }
+    hideRecordingPopup();
+    if (isCancelled) {
+        document.getElementById('message').value = '';
+    }
+}
+
+function startVisualizer() {
+    if (!navigator.mediaDevices) return;
+
+    navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const source = audioCtx.createMediaStreamSource(stream);
+        const analyser = audioCtx.createAnalyser();
+        source.connect(analyser);
+        analyser.fftSize = 64;
+
+        const canvas = document.getElementById('visualizer');
+        const ctx = canvas.getContext('2d');
+        const bufferLength = analyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        function draw() {
+            requestAnimationFrame(draw);
+            analyser.getByteFrequencyData(dataArray);
+            ctx.fillStyle = '#eee';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            const barWidth = (canvas.width / bufferLength) * 2.5;
+            let x = 0;
+            for (let i = 0; i < bufferLength; i++) {
+                const barHeight = dataArray[i] / 2;
+                ctx.fillStyle = '#4ca1af';
+                ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
+                x += barWidth + 1;
+            }
+        }
+
+        draw();
+    }).catch(err => {
+        console.error("Visualizer error:", err);
+    });
+}
 </script>
 
 </body>
