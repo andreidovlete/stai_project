@@ -1,27 +1,21 @@
 from flask import Flask, request, render_template, session, redirect, url_for
 from flask_session import Session
 from datetime import datetime, timedelta
-import random
+from chat_bot import ChatBot
 
-# Flask setup with custom folders
+# Flask setup
 app = Flask(__name__, template_folder='../web', static_folder='../web/static')
-app.secret_key = 'chatbot_secret_key'  
+app.secret_key = 'chatbot_secret_key'
 app.config["SESSION_TYPE"] = "filesystem"
 app.config["SESSION_PERMANENT"] = False
 Session(app)
 
-# Simple response generator
+chatbot = ChatBot("intents.json")
+# Helper function
 def chit_chat(message):
-    responses = [
-        "That's interesting!",
-        "Tell me more!",
-        "I like chatting with you.",
-        "Haha, good one!",
-        "Why do you say that?",
-        "Sounds cool!",
-    ]
-    return random.choice(responses)
+    return chatbot.get_response(message)
 
+# Home page
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -32,6 +26,7 @@ def index():
             return redirect(url_for("chat"))
     return render_template("index.html", username=None)
 
+# Chat interface
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
     username = session.get("username", "You")
@@ -41,11 +36,13 @@ def chat():
     if request.method == "POST":
         user_msg = request.form.get("message", "").strip()
         if user_msg:
-            now = datetime.utcnow() + timedelta(hours=3)  # GMT+3
+            now = datetime.utcnow() + timedelta(hours=3)
             session['chat_history'].append(("user", username, user_msg, now))
+
             bot_reply = chit_chat(user_msg)
             bot_time = datetime.utcnow() + timedelta(hours=3)
             session['chat_history'].append(("bot", "Bot", bot_reply, bot_time))
+
             session.modified = True
 
     return render_template("index.html", chat_history=session["chat_history"], username=username)
