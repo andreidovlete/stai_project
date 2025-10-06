@@ -19,7 +19,7 @@ class ChatBot:
         self.previous_intent = None
         self.nlp = spacy.load("en_core_web_sm")
         self.model = SentenceTransformer("all-MiniLM-L6-v2")
-        self.serpapi_key = "67367864603c6d6631e2a8b05a01b806df5d1bfe57a2df91176fc0608952a981"
+        self.serpapi_key = "APIKEY"
 
     def _normalize(self, text):
         return re.sub(r'[^\w\s]', '', text.lower())
